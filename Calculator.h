@@ -1,3 +1,8 @@
+#include <string>
+#include <limits>
+#include <algorithm>
+#include <iostream>
+
 #ifndef CALCULATOR_H
 #define CALCULATOR_H
 

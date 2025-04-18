@@ -1,8 +1,5 @@
-#include <iostream>
+
 #include "Calculator.h"
-#include <string>
-#include <limits>
-#include <algorithm>
 
 void clearInput() {
     std::cin.clear();

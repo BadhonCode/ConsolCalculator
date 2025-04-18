@@ -1,52 +1,72 @@
 #include <iostream>
 #include "Calculator.h"
 #include <string>
+#include <limits> // for numeric_limits
+#include <algorithm> // for transform
 
 using namespace std;
 
-int main () {
+int main() {
     Calculator cals;
     double num1, num2, result;
-    char opp;
+    string opp;
     string again;
 
-
-    cout << "=== Counsole Calculator ===" <<endl;
+    cout << "=== Console Calculator ===" << endl;
 
     do {
-        cout << "Enter first number: " <<endl;
-        cin >> num1;
-
-        cout << "Enter Operator ( +, -, *, / ): " <<endl;
-        cin >> opp;
-
-        cout << "Enter second number: " <<endl;
-        cin >> num2;
-
-        try {
-            switch (opp)
-            {
-            case '+': result = cals.add (num1, num2);break;
-            case '-': result = cals.subtract (num1, num2);break;
-            case '*': result = cals.multiply (num1, num2);break;
-            case '/': result = cals.divide (num1, num2);break;
-            default:
-                cout << "invalid operator" <<endl;
-                continue;;
-            }
-
-            cout << "Result: " << result <<endl;
+        // Input first number
+        while (true) {
+            cout << "Enter first number: ";
+            cin >> num1;
+            if (!cin.fail()) break;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input. Please enter a valid number." << endl;
         }
-        catch (const exception& e) {
+
+        // Input operator
+        while (true) {
+            cout << "Enter Operator (+, -, *, /): ";
+            cin >> opp;
+            if (opp == "+" || opp == "-" || opp == "*" || opp == "/") break;
+            cout << "Invalid operator. Please enter +, -, *, or /." << endl;
+        }
+
+        // Input second number
+        while (true) {
+            cout << "Enter second number: ";
+            cin >> num2;
+            if (!cin.fail()) break;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input. Please enter a valid number." << endl;
+        }
+
+        // Perform calculation
+        try {
+            if (opp == "+") {
+                result = cals.add(num1, num2);
+            } else if (opp == "-") {
+                result = cals.subtract(num1, num2);
+            } else if (opp == "*") {
+                result = cals.multiply(num1, num2);
+            } else if (opp == "/") {
+                result = cals.divide(num1, num2);
+            } else {
+                throw invalid_argument("Invalid operator.");
+            }
+            cout << "Result: " << result << endl;
+        } catch (const exception& e) {
             cout << "Error: " << e.what() << endl;
         }
+
+        // Ask to calculate again
         cout << "Calculate again? (Yes/No): ";
         cin >> again;
+        transform(again.begin(), again.end(), again.begin(), ::tolower); // Convert to lowercase
+    } while (again == "yes");
 
-
-    }
-    while (again == "yes" || again == "Yes") ;
-    cout << "Good Bye " <<endl;
-
+    cout << "Goodbye!" << endl;
     return 0;
 }

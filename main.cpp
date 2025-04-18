@@ -1,72 +1,75 @@
 #include <iostream>
 #include "Calculator.h"
 #include <string>
-#include <limits> // for numeric_limits
-#include <algorithm> // for transform
+#include <limits>
+#include <algorithm>
 
-using namespace std;
+void clearInput() {
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
+
+double getNumber(const std::string& prompt) {
+    double num;
+    while (true) {
+        std::cout << prompt;
+        std::cin >> num;
+        if (!std::cin.fail()) break;
+        clearInput();
+        std::cout << "Invalid input. Please enter a valid number." << std::endl;
+    }
+    return num;
+}
+
+std::string getOperator() {
+    std::string op;
+    while (true) {
+        std::cout << "Enter Operator (+, -, *, /): ";
+        std::cin >> op;
+        if (op == "+" || op == "-" || op == "*" || op == "/") break;
+        std::cout << "Invalid operator. Please enter +, -, *, or /." << std::endl;
+    }
+    return op;
+}
+
+bool askToContinue() {
+    std::string again;
+    std::cout << "Calculate again? (Yes/No): ";
+    std::cin >> again;
+    std::transform(again.begin(), again.end(), again.begin(), ::tolower);
+    return again == "yes";
+}
+
+void performCalculation() {
+    Calculator cals;
+    double num1 = getNumber("Enter first number: ");
+    std::string op = getOperator();
+    double num2 = getNumber("Enter second number: ");
+    double result;
+
+    try {
+        if (op == "+") {
+            result = cals.add(num1, num2);
+        } else if (op == "-") {
+            result = cals.subtract(num1, num2);
+        } else if (op == "*") {
+            result = cals.multiply(num1, num2);
+        } else if (op == "/") {
+            result = cals.divide(num1, num2);
+        } else {
+            throw std::invalid_argument("Invalid operator.");
+        }
+        std::cout << "Result: " << result << std::endl;
+    } catch (const std::exception& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+    }
+}
 
 int main() {
-    Calculator cals;
-    double num1, num2, result;
-    string opp;
-    string again;
-
-    cout << "=== Console Calculator ===" << endl;
-
+    std::cout << "=== Console Calculator ===" << std::endl;
     do {
-        // Input first number
-        while (true) {
-            cout << "Enter first number: ";
-            cin >> num1;
-            if (!cin.fail()) break;
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Invalid input. Please enter a valid number." << endl;
-        }
-
-        // Input operator
-        while (true) {
-            cout << "Enter Operator (+, -, *, /): ";
-            cin >> opp;
-            if (opp == "+" || opp == "-" || opp == "*" || opp == "/") break;
-            cout << "Invalid operator. Please enter +, -, *, or /." << endl;
-        }
-
-        // Input second number
-        while (true) {
-            cout << "Enter second number: ";
-            cin >> num2;
-            if (!cin.fail()) break;
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Invalid input. Please enter a valid number." << endl;
-        }
-
-        // Perform calculation
-        try {
-            if (opp == "+") {
-                result = cals.add(num1, num2);
-            } else if (opp == "-") {
-                result = cals.subtract(num1, num2);
-            } else if (opp == "*") {
-                result = cals.multiply(num1, num2);
-            } else if (opp == "/") {
-                result = cals.divide(num1, num2);
-            } else {
-                throw invalid_argument("Invalid operator.");
-            }
-            cout << "Result: " << result << endl;
-        } catch (const exception& e) {
-            cout << "Error: " << e.what() << endl;
-        }
-
-        // Ask to calculate again
-        cout << "Calculate again? (Yes/No): ";
-        cin >> again;
-        transform(again.begin(), again.end(), again.begin(), ::tolower); // Convert to lowercase
-    } while (again == "yes");
-
-    cout << "Goodbye!" << endl;
+        performCalculation();
+    } while (askToContinue());
+    std::cout << "Goodbye!" << std::endl;
     return 0;
 }
